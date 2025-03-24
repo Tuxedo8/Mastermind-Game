@@ -1,0 +1,168 @@
+\documentclass{article}                 
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{verbatim}
+
+\title{Projet de Jeu, MASTER-MIND en Java}
+\author{Saphir Gobbi}
+
+
+\date{27 avril 2024}
+
+\begin{document}
+\maketitle
+ 
+\tableofcontents
+            
+
+
+\section{Introduction}
+Le présent rapport décrit la conception et l'implémentation d'un jeu de type « Master Mind », un jeu de logique où le joueur doit deviner une combinaison de pions de couleur, seul ou en multi-joueur. Ce projet consiste à créer une version informatisée du jeu, en permettant notamment la personnalisation des paramètres tels que le nombre de pions et de couleurs, ainsi que le nombre de tentatives autorisées. De plus, une interface graphique via Awt, Swing a été implémenté, ainsi qu'une fonction de sauvegarde et de chargement de partie en fichier Json. \\
+Le rapport abordera la structure du jeu et son fonctionnement.
+
+\section{Structure du Jeu}
+La structure du jeu repose sur plusieurs classes métier, chacune ayant un rôle spécifique. 
+\begin{itemize}
+\item 
+\begin{verbatim} 
+class GUI extends JFrame:
+\end{verbatim}
+S'occupe de l'affichage des classes. Possède le main du jeu.
+
+\item
+\begin{verbatim}
+abstract class GUIComponent:
+\end{verbatim}
+Une classe abstraite qui est étendu par toutes les classes qui affiche quelque chose. Possède comme attributstatique une liste d'options et le profil de chaque joueurs, le nombre de joueurs, le nombre de partie et la partie actuellement jouée.
+
+\item
+\begin{verbatim}
+class Home extends GUIComponent:
+\end{verbatim}
+Une classe qui affiche au lancement du jeu, une page d'accueil.
+
+\item
+\begin{verbatim}
+class SetOptions extends GUIComponent:
+\end{verbatim}
+Une classe qui affiche une page d'options que l'utilisateur devra cocher, les traitera, initialisera les informations nécessaire, et créera les parties.
+
+\item
+\begin{verbatim}
+class Play extends GUIComponent:
+\end{verbatim}
+Une classe qui affiche le jeu.
+
+\item
+\begin{verbatim}
+class Score extends GUIComponent:
+\end{verbatim}
+Une classe qui affiche le score de chaque joueurs.
+
+\item
+\begin{verbatim}
+class Save extends GUIComponent:
+\end{verbatim}
+Une classe qui permet de sauvegarder la partie en cours dans n'importe quel dossier local, en le mettant dans un fichier Json.
+
+\item
+\begin{verbatim}
+class Load extends GUIComponent:
+\end{verbatim}
+Une classe qui permet de charger une partie enregistrer en parsant le fichier Json associer.
+
+\item
+\begin{verbatim}
+class Jeu:
+\end{verbatim}
+Une classe qui possède des méthodes pour tester la validité d'une tentative de l'utilisateur, et renvoie une liste selon la difficulté choisie.
+
+\item
+\begin{verbatim}
+class Traitement:
+\end{verbatim}
+Une classe a comme attribut toute les options, choisie par l'utilisateur. Un Traitement par joueur.
+
+\item
+\begin{verbatim}
+class Combinaison:
+\end{verbatim}
+Une classe qui a comme attribut une liste de Pion.
+
+\item
+\begin{verbatim}
+class Pion:
+\end{verbatim}
+Une classe qui a comme attribut une position et une couleur.
+
+\item
+\begin{verbatim}
+public enum Couleur:
+\end{verbatim}
+Une enumération de Couleur.
+
+\end{itemize}
+
+\section{Programme principal}
+Le projet possède 3 dossiers : src, build, media qui contient les png utilisés, et lib qui contient la librairie Json.
+La compilation du jeu et le lancement se fait respectivement avec les commandes :\\
+
+\texttt{javac -cp lib/json-simple.jar -d build/ src/*.java}\\ et
+
+\texttt{java -cp lib/json-simple.jar:build GUI}\\
+
+Pour l'affichage du jeu, le choix d'une interface graphique a été fait, via Swing, Awt et du Json pour la sauvegarde et la charge d'une partie. La classe \texttt{GUI extends JFrame}, permet l'affichage d'une fenêtre graphique, possède le \texttt{main} principal et lance la page d'accueil.
+
+\begin{figure}[h]
+\begin{minipage}{0.3\textwidth}
+\centering
+\includegraphics[width=\linewidth]{MasterMind_Photo/MasterMind_Home.png}
+\caption{Page d'accueil}
+\label{fig:Home}
+\end{minipage}\hfill
+\begin{minipage}{0.3\textwidth}
+\centering
+\includegraphics[width=\linewidth]{MasterMind_Photo/MasterMind_Options.png}
+\caption{Les options}
+\label{fig:Options}
+\end{minipage}\hfill
+\begin{minipage}{0.3\textwidth}
+\centering
+\includegraphics[width=\linewidth]{MasterMind_Photo/MasterMind_Play.png}
+\caption{Le jeu}
+\label{fig:Play}
+\end{minipage}
+\begin{minipage}{0.3\textwidth}
+\centering
+\includegraphics[width=\linewidth]{MasterMind_Photo/MasterMind_Score.png}
+\caption{Le tableau des scores}
+\label{fig:Score}
+\end{minipage}
+\begin{minipage}{0.3\textwidth}
+\centering
+\includegraphics[width=\linewidth]{MasterMind_Photo/MasterMind_Save.png}
+\caption{Création d'une Sauvegarde}
+\label{fig:Home}
+\end{minipage}\hfill
+\begin{minipage}{0.3\textwidth}
+\centering
+\includegraphics[width=\linewidth]{MasterMind_Photo/MasterMind_Load.png}
+\caption{Chargement d'une partie}
+\label{fig:Home}
+\end{minipage}\hfill
+\end{figure}
+
+\section{Obstacle Rencontré}
+Le premier problème rencontré a été le choix de la structure à adopter, en passant d'une seul classe possédant des fonctions qui affiche les différents écrans, à une classe \texttt{GUI extend JFrame} qui affiche les écrans ainsi qu'une classe abstraite \texttt{GUIComponent} et de ses sous-classes qui re-définissent sa methode \texttt{public void setupUI()} (décrivant la structure graphique et les options de l'écran a afficher), partage ses attributs static et ont chacunes une méthode dans \texttt{GUI} accessbible pour toutes les sous-classes de \texttt{GUIComponent} qui appel \texttt{setupUI()} de chaque sous-classe de \texttt{GUIComponent}.
+
+Dans un second temps, la fonction de Sauvegarde et de Charge a été un difficile a implémenté, d'abord par sérialisation qui n'était pas adapté. Le choix a été fait d'utilisé une librairie  Json pour Sauvegarder. Convertissant toute les couleurs de type \texttt{Couleur} en \texttt{String} pendant la Sauvegarde afin que le fichier Json soit valide, puis en faisant l'opération inverse lors du chargement de la partie. 
+
+\section{Conclusion}
+Ce projet nous a permis de mettre en pratique nos connaissances en programmation orientée objet et de relever plusieurs défis liés à la conception d'un jeu complexe. Nous avons appris à gérer la structure du jeu, l'interaction avec l'utilisateur, ainsi que la manipulation de données et les opérations de sauvegarde et restauration. Des améliorations futur pourrai être envisagé telle qu'un mode de jeu \texttt{User vs Computer}. 
+
+\end{document}
